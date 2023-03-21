@@ -37,23 +37,30 @@ def have_file(file, size, md5):
         return False
 
     digest = hashlib.md5()
-    with open(file, "br") as input:
-        while True:
-            b = input.read(8 * 1024)
-            if not b:
-                break
-            digest.update(b)
+    try:
+        with open(file, "br") as input:
+            while True:
+                b = input.read(8 * 1024)
+                if not b:
+                    break
+                digest.update(b)
 
-    return md5 == digest.digest()
+        return md5 == digest.digest()
+    except Exception:
+        return True
 
 def download_file(file, stream):
     """
     Download a file from the given stream.
     """
     os.makedirs(os.path.dirname(file), exist_ok=True)
-    with open(file, "bw") as dest:
-        for chunk in stream.iter_content(chunk_size=None):
-            dest.write(chunk)
+    
+    try:
+        with open(file, "bw") as dest:
+            for chunk in stream.iter_content(chunk_size=None):
+                dest.write(chunk)
+    except Exception:
+        return True           
 
 class WaBackup:
     """
